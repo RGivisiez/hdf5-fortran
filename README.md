@@ -1,6 +1,6 @@
 # HDF5-Fortran
 
-  **Se possível, use o HDF5 do python, é muito mais fácil.**
+  **Se possível use o HDF5 do python, é muito mais fácil.**
 
   A ideia é utilizar o fortran o minímo possível, só para salvar e compactar os dados, qualquer
 análise posterior vai ser feita usando o python. Desta forma, deixei alguns exemplos de como
@@ -25,4 +25,5 @@ salvar dados usando HDF5-fortran, o que você vai encontrar nos arquivos:
 **Referências**
 
 [Github](https://github.com/mokus0/hdf5/tree/master/fortran/examples)
+
 [HDFGroup](https://support.hdfgroup.org/HDF5/examples/api-fortran.html)
