@@ -1,11 +1,9 @@
-! This program is based on the basic.f90,
-! but know we will write more complex
-! datasets, such as a array and a scalar
-! on the same line.
-!
-! | Configuration | Energy  |
-! | [1,2,3,4,5]   | 2       |
-!
+! In this program, you'll see how to:
+! - Create and save a dataset.
+! - Create a group.
+! - Write comments in a dataset.
+! - Save a compressed hdf5 file.
+
 Program Main
 
   Use HDF5
@@ -30,11 +28,11 @@ Program Main
 
   Integer, Parameter :: rank = 2                             ! Dataset rank (in this case 2 dimensions)
 
-  ! Because of the chunk defined below in gzip's variables,
-  ! dim0 and dim1 have to be divisible by 5.
+!> Because of the chunk defined below in gzip's variables,
+!> dim0 and dim1 have to be divisible by 10.
 
-    Integer*4, Parameter :: dim0 = 10 , dim1 = 10            ! Dataset dimensions
-    Integer(HSIZE_T), Dimension(rank) :: dims = (/dim0, dim1/) ! Dataset dimensions
+  Integer*4, Parameter :: dim0 = 100 , dim1 = 100              ! Dataset dimensions
+  Integer(HSIZE_T), Dimension(rank) :: dims = (/dim0, dim1/) ! Dataset dimensions
 
   ! Attribute's variables.
   INTEGER(HID_T) :: atr_id                                                   ! Attribute identifier
@@ -47,45 +45,17 @@ Program Main
   Integer(HSIZE_T), Dimension(atr_rank) :: atr_dims = (/atr_dim0, atr_dim1/) ! Attribute dimension
   CHARACTER(LEN=80), DIMENSION(atr_dim0) ::  attr_data                       ! Attribute data
 
-  ! Gzip's variables
+!> Gzip's variables
 
-  Integer*4, Parameter :: chunk0 = 5 , chunk1 = 5
+!> To zip a dataset it is necessary to separete it in chunks.
+
+  Integer*4, Parameter :: chunk0 = dim0 / 10 , chunk1 = dim1 / 10             
   Integer(HSIZE_T), Dimension(1:2) :: chunk =(/chunk0,chunk1/)
 
-!> Data's variables to be written in the dataset.
- 
+  ! Data's variables to be written in the dataset.
+
+  Real*8, Dimension (1:dim0, 1:dim1) :: matriz
   Integer*4 i, j
-  Integer*4, Parameter :: array_size = 2   ! Array size
-  Integer*4, Parameter :: array_size = 2   ! Array size
-  
-  Type sample
-
-    ! Create a new variable type with an array and a scalar.
-
-    Real*8, Dimension(1:array_size) :: config
-    Real*8 scalar
-
-  End Type sample
-
-  Type(sample), Dimension(1:dim0), Target :: samples    ! Data to be written in the dataset
-  Type(c_ptr) :: f_ptr                                  ! Pointer to samples(1)
-
-  Integer(HSIZE_T), Dimension(1) :: array_dims = (/array_size/)  ! Dimension for the arrray type
-  Integer(HID_T)   :: array_type_id                              ! Array type identifier
-  Integer(HID_T)   :: sample_type_id                             ! Sample type identifier
-
-
-  !
-  ! Create data to be written in the dataset.
-  !
-  Do i = 1, dim0
-    samples(i)%config(1:array_size) = (-1)**i
-    samples(i)%scalar = i * 100.0d0
-  End do
-
-  print*, 'Sample (1)'
-  print*, 'Array:', samples(1)%config
-  print*, 'Scalar:', samples(1)%scalar
 
   !
   ! Initialize FORTRAN interface.
@@ -104,7 +74,7 @@ Program Main
   !
   CALL h5screate_simple_f(rank, dims, dspace_id, hdf_err)
 
-  ! =========================== Gzip ====================================
+!> =========================== Gzip ====================================
 
   ! Checking for gzip
   Call gzip_check()
@@ -118,47 +88,37 @@ Program Main
   CALL h5pset_deflate_f(dcpl, 9, hdf_err)
   CALL h5pset_chunk_f(dcpl, rank, chunk, hdf_err)
 
-  ! ======================================================================
-
-!> ================= Create a complex data type ==========================
-
-  !
-  ! Create the memory data type.
-  ! (C_LOC returns a pointer to the data)
-  ! (return a sample_type_id, this will be used to write the data
-  ! in h5dwrite_f)
-  !
-  CALL H5Tcreate_f(H5T_COMPOUND_F, H5OFFSETOF(C_LOC(samples(1)), C_LOC(samples(2))), &
-       sample_type_id, hdf_err) 
-
-  ! Create an array type
-  CALL h5Tarray_create_f(H5T_NATIVE_DOUBLE, 1, array_dims, array_type_id, hdf_err)
-
-  ! Then use that array type to insert values into
-  CALL H5Tinsert_f( sample_type_id, "Array", & ! Não colocar caracteres especiais: ç,á, ...
-       H5OFFSETOF(C_LOC(samples(1)),C_LOC(samples(1)%config(1))), array_type_id, hdf_err)
-
-  CALL H5Tinsert_f( sample_type_id, "Scalar", &
-       H5OFFSETOF(C_LOC(samples(1)),C_LOC(samples(1)%scalar)), H5T_NATIVE_DOUBLE, hdf_err)
-
-!> =======================================================================
-
   !
   ! Create a dataset with default properties.
   ! (It uses the file_id and the dspace_id to create the dataset,
   ! also links a dset_id to the dataset)
   !
-  CALL H5Dcreate_f(file_id, dset_name, sample_type_id, dspace_id, &
-         dset_id, hdf_err, dcpl)
+  CALL h5dcreate_f(file_id, dset_name, H5T_NATIVE_DOUBLE, dspace_id, &
+       dset_id, hdf_err, dcpl)
+
+  ! Create the dataset without gzip compression.
+  ! CALL h5dcreate_f(file_id, dset_name, H5T_NATIVE_DOUBLE, dspace_id, &
+       ! dset_id, hdf_err)
+
+!> ======================================================================
+
+  !
+  ! Create data to be written in the dataset.
+  !
+
+  Do i = 1, dim0
+    Do j = 1, dim1
+      matriz(i, j) = (i - 1) * dim1 + j
+    end do
+  enddo
 
   !
   ! Write data to the dataset.
   ! (This data will be in the root folder (/) )
   !
-  f_ptr = C_LOC(samples(1))
-  CALL H5Dwrite_f(dset_id, sample_type_id, f_ptr, hdf_err)
+  CALL h5dwrite_f(dset_id, H5T_NATIVE_DOUBLE, matriz, dims, hdf_err)
 
-!> ! ====================================================================
+  ! ====================================================================
 
   ! ============== Group ===============================================
 
@@ -176,14 +136,13 @@ Program Main
 
   path = '/' // Trim(group_name) // '/' // Trim(dset_name)
 
-  CALL h5dcreate_f(file_id, path, sample_type_id, dspace_id, &
+  CALL h5dcreate_f(file_id, path, H5T_NATIVE_DOUBLE, dspace_id, &
        dset_id, hdf_err)
 
   !
   ! Write data to the dataset that is inside the folder.
   !
-  f_ptr = C_LOC(samples(1))
-  CALL H5Dwrite_f(dset_id, sample_type_id, f_ptr, hdf_err)
+  CALL h5dwrite_f(dset_id, H5T_NATIVE_DOUBLE, matriz, dims, hdf_err)
 
   ! ===================================================================
 
