@@ -25,12 +25,14 @@ salvar dados usando HDF5-fortran, o que você vai encontrar nos arquivos:
 
 - Salva dados em formatos mais complexos.
 
+Ex.:
+
 | Array  | Scalar |
 | ------------- | ------------- |
 | [1,2,3,4,5]  | 2 |
 
-- Salvar dados parciais, i.e., ir acrescentando os dados a médida que o programa roda.
-(Usei chunck para isso, mas pode ser feito extendendo os dataset)
+- Salvar dados parciais, i.e., vai acrescentando os dados a médida que o programa roda.
+(Usei chunck para isso, mas pode ser feito criando um dataset que pode ser extendido)
 
  **Para compilar:**
 
