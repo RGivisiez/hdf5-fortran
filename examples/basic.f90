@@ -25,7 +25,7 @@ Program Main
   ! Dataset's variables.
 
   Integer, Parameter :: rank = 2                             ! Dataset rank (in this case 2 dimensions)
-  Integer*4, Parameter :: dim0 = 4 , dim1 = 4                ! Dataset dimensions
+  Integer*4, Parameter :: dim0 = 3 , dim1 = 4                ! Dataset dimensions
   Integer(HSIZE_T), Dimension(rank) :: dims = (/dim0, dim1/) ! Dataset dimensions
 
   ! Attribute's variables.
@@ -78,7 +78,7 @@ Program Main
   Do i = 1, dim0
     Do j = 1, dim1
 
-      matriz(i, j) = (i - 1) * dim1 + j
+      matriz(i, j) = (i - 1) * 4 + j
 
     end do
   enddo
