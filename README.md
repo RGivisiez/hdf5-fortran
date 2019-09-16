@@ -21,7 +21,7 @@ salvar dados usando HDF5-fortran, o que você vai encontrar nos arquivos:
 
 - Compacta o arquivo.
 
-**complex_data.f90**
+**complex_data_with_gzip.f90**
 
 - Salva dados em formatos mais complexos.
 
