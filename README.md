@@ -29,16 +29,16 @@ salvar dados usando HDF5-fortran, o que você vai encontrar nos arquivos:
 
  **Para compilar:**
 
-'''
+```
   hf5c nome_do_programa.f90.
-'''
+```
 
  Utilidade:
 
-'''
+```
  O comando hf5c -show mostra as flags que estão sendo usadas. Isso é interessante para
 ver a localização das bibliotecas e como elas são linkadas. 
-'''
+```
 
 **Referências**
 
