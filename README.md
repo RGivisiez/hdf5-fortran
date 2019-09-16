@@ -13,17 +13,22 @@ salvar dados usando HDF5-fortran, o que você vai encontrar nos arquivos:
 
 **basic.f90:**
 
-- Criar e salvar um conjunto de dados simples.
-- Criar grupos.
+- Cria e salva um conjunto de dados simples.
+- Cria um grupo.
 - Escrever comentários nos dados.
 
 **basic_with_gzip.f90:**
 
-- Compactar o arquivo.
+- Compacta o arquivo.
 
 **complex_data.f90**
 
-- Salvar dados em formatos mais complexos.
+- Salva dados em formatos mais complexos.
+| Array | Scalar  |
+|---------------|---------|
+| [1,2,3,4,5]   | 2       |
+
+
 - Salvar dados parciais, i.e., ir acrescentando os dados a médida que o programa roda.
 (Usei chunck para isso, mas pode ser feito extendendo os dataset)
 
@@ -33,7 +38,7 @@ salvar dados usando HDF5-fortran, o que você vai encontrar nos arquivos:
   hf5c nome_do_programa.f90
 ```
 
- Utilidade:
+ **Utilidade:**
 
 ```
 hf5c -show
@@ -44,6 +49,8 @@ ver a localização das bibliotecas do HDF5 e como elas são linkadas na hora de
 
 **Referências**
 
-[Github](https://github.com/mokus0/hdf5/tree/master/fortran/examples)
+  Todos os programas foram baseados nos exemplos dos links abaixo.
 
-[HDFGroup](https://support.hdfgroup.org/HDF5/examples/api-fortran.html)
+- [Github](https://github.com/mokus0/hdf5/tree/master/fortran/examples)
+
+- [HDFGroup](https://support.hdfgroup.org/HDF5/examples/api-fortran.html)
