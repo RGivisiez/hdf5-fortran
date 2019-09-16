@@ -49,7 +49,7 @@ Program Main
 
   ! Gzip's variables
 
-  Integer*4, Parameter :: chunk0 = 5 , chunk1 = 5
+  Integer*4, Parameter :: chunk0 = dim0 / 5 , chunk1 = dim1 / 5   
   Integer(HSIZE_T), Dimension(1:2) :: chunk =(/chunk0,chunk1/)
 
 !> Data's variables to be written in the dataset.
