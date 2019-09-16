@@ -21,7 +21,7 @@ Program Main
 
   ! Names for files, groups and other things.
 
-  Character(len=16), Parameter :: file_name = 'dataset_gzip.h5' 
+  Character(len=23), Parameter :: file_name = 'complex_dataset_gzip.h5' 
   Character(len=7), Parameter :: dset_name = 'dataset'
   Character(len=13), Parameter :: group_name = 'first_folder'
   Character(len=60) :: path
@@ -56,7 +56,6 @@ Program Main
  
   Integer*4 i, j
   Integer*4, Parameter :: array_size = 2   ! Array size
-  Integer*4, Parameter :: array_size = 2   ! Array size
   
   Type sample
 
@@ -67,13 +66,12 @@ Program Main
 
   End Type sample
 
-  Type(sample), Dimension(1:dim0), Target :: samples    ! Data to be written in the dataset
-  Type(c_ptr) :: f_ptr                                  ! Pointer to samples(1)
+  Type(sample), Dimension(1:dim0), Target :: samples             ! Data to be written in the dataset
+  Type(c_ptr) :: f_ptr                                           ! Pointer to samples(1)
 
   Integer(HSIZE_T), Dimension(1) :: array_dims = (/array_size/)  ! Dimension for the arrray type
   Integer(HID_T)   :: array_type_id                              ! Array type identifier
   Integer(HID_T)   :: sample_type_id                             ! Sample type identifier
-
 
   !
   ! Create data to be written in the dataset.
@@ -86,6 +84,10 @@ Program Main
   print*, 'Sample (1)'
   print*, 'Array:', samples(1)%config
   print*, 'Scalar:', samples(1)%scalar
+  print*,
+  print*, 'Sample (2)'
+  print*, 'Array:', samples(2)%config
+  print*, 'Scalar:', samples(2)%scalar
 
   !
   ! Initialize FORTRAN interface.
