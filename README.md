@@ -24,10 +24,10 @@ salvar dados usando HDF5-fortran, o que você vai encontrar nos arquivos:
 **complex_data.f90**
 
 - Salva dados em formatos mais complexos.
-| Array | Scalar  |
-|---------------|---------|
-| [1,2,3,4,5]   | 2       |
 
+| Array  | Scalar |
+| ------------- | ------------- |
+| [1,2,3,4,5]  | 2 |
 
 - Salvar dados parciais, i.e., ir acrescentando os dados a médida que o programa roda.
 (Usei chunck para isso, mas pode ser feito extendendo os dataset)
