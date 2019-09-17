@@ -34,6 +34,11 @@ Ex.:
 - Salvar dados parciais, i.e., vai acrescentando os dados a médida que o programa roda.
 (Usei chunck para isso, mas pode ser feito criando um dataset que pode ser extendido)
 
+**complex_data_chunked_with_gzip.f90**
+
+- Seleciona e escreve os dados partes específicas do arquivo de dados.
+
+
  **Para compilar:**
 
 ```
