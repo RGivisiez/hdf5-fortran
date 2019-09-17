@@ -1,5 +1,5 @@
 ! This program is based on the basic.f90,
-! but know we will write more complex
+! but now we will write a more complex
 ! datasets, such as a array and a scalar
 ! on the same line.
 !
@@ -50,7 +50,7 @@ Program Main
   ! Gzip's variables
 
   Integer*4, Parameter :: chunk0 = dim0 / 5 , chunk1 = dim1 / 5   
-  Integer(HSIZE_T), Dimension(1:2) :: chunk =(/chunk0,chunk1/)
+  Integer(HSIZE_T), Dimension(1:2) :: chunk =(/chunk0, chunk1/)
 
 !> Data's variables to be written in the dataset.
  
