@@ -36,8 +36,11 @@ Ex.:
 
 **complex_data_chunked_with_gzip.f90**
 
-- Seleciona e escreve os dados partes específicas do arquivo de dados.
+- Seleciona e escreve dados em partes específicas do arquivo.
 
+**unlimeted_complex_data_chunked_with_gzip**
+
+- Cria uma arquivo que pode ser expandido de forma indefinida.
 
  **Para compilar:**
 

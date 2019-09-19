@@ -16,7 +16,7 @@ Program Main
 
   ! Names for files, groups and other things.
 
-  Character(len=30), Parameter :: file_name = 'complex_dataset_chunk_gzip.h5' 
+  Character(len=35), Parameter :: file_name = 'unl_omplex_dataset_chunk_gzip.h5' 
   Character(len=7), Parameter :: dset_name = 'dataset'
   Character(len=13), Parameter :: group_name = 'first_folder'
   Character(len=60) :: path
@@ -61,7 +61,7 @@ Program Main
 
   End Type sample
 
-!> We will create only half of the data.
+  ! We will create only half of the data.
 
   Type(sample), Dimension(1:dim0 / 2), Target :: samples         ! Data to be written in the dataset
   Type(c_ptr) :: f_ptr                                           ! Pointer to samples(1)
@@ -70,13 +70,19 @@ Program Main
   Integer(HID_T)   :: array_type_id                              ! Array type identifier
   Integer(HID_T)   :: sample_type_id                             ! Sample type identifier
 
-!> Chunk's variables
+  ! Chunk's variables
 
   Integer(HSIZE_T) :: chunck_dims(1:2) = (/5, 5/)          ! Chunk size
   INTEGER(HSIZE_T), DIMENSION(1:2) :: offset = (/5, 0/)  ! Hyperslab offset
   INTEGER(HID_T) :: memspace                          ! memspace identifier 
+  INTEGER(HID_T) :: new_dspace_id                          ! memspace identifier 
 
+  ! Unlimited's variables
 
+  INTEGER(HSIZE_T), DIMENSION(1:2) :: inf_dims
+  Integer(HSIZE_T), Dimension(rank) :: ext_dims = (/2*dim0, 2*dim1/) ! Dataset dimensions
+  INTEGER(HSIZE_T), DIMENSION(1:2) :: ext_offset = (/15, 0/)  ! Hyperslab offset
+  INTEGER(HSIZE_T), DIMENSION(1:2) :: ndims
 
   !
 !> Create data to be written in the dataset. 
@@ -101,6 +107,10 @@ Program Main
   !
   CALL h5open_f(hdf_err)
 
+!> H5S_UNLIMITED_F is a varialbe iniated after calling h5open_f.
+
+  inf_dims = (/H5S_UNLIMITED_F, H5S_UNLIMITED_F/)
+
   !
   ! Create a file. (It links a file_id to the file)
   !
@@ -109,10 +119,9 @@ Program Main
   ! =========================== Basic write ==========================
 
   !
-  ! Create a dataspace. (It links a dspace_id to the dataspace)
+!> Create an unlimited dataspace. (It links a dspace_id to the dataspace)
   !
-  CALL h5screate_simple_f(rank, dims, dspace_id, hdf_err)
-
+  CALL h5screate_simple_f(rank, dims, dspace_id, hdf_err, inf_dims)
   ! =========================== Gzip ====================================
 
   ! Checking for gzip
@@ -196,7 +205,7 @@ Program Main
 
   ! ===================================================================
 
-!> ======================== Chunk =====================================
+  ! ======================== Chunk =====================================
 
   !
   ! Select the piece of the dataspace that hasn't been written yet. 
@@ -216,7 +225,21 @@ Program Main
   CALL h5dwrite_f(dset_id, sample_type_id, f_ptr, hdf_err, &
        memspace, dspace_id)
 
-!> ===================================================================
+
+  CALL h5dset_extent_f(dset_id, ext_dims, hdf_err)
+
+  CALL h5dget_space_f(dset_id, new_dspace_id, hdf_err)
+
+  CALL h5sselect_hyperslab_f(new_dspace_id, H5S_SELECT_SET_F, &
+       ext_offset, chunck_dims, hdf_err) 
+
+  CALL h5screate_simple_f(2, chunck_dims, memspace, hdf_err)
+
+  f_ptr = C_LOC(samples(1))
+  CALL h5dwrite_f(dset_id, sample_type_id, f_ptr, hdf_err, &
+       memspace, new_dspace_id)
+
+ ! ===================================================================
 
   ! ====================== Attribute ==================================
 
